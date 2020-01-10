@@ -114,26 +114,14 @@ function bingo-rows-calls {
 		foreach ($x in "B",1,"I",2,"N",3,"G",4,"O",5) {
 			$checkpoint = echo $card.keys | select-string $x
 			if ($checkpoint -eq $null) {
-				if (($x -eq "B") -or ($x -eq "I") -or ($x -eq "N") -or ($x -eq "G") -or ($x -eq "O")) {
-					echo "BINGO! $x-column is done."
-					$call="exit"
+				switch -regex ($x) {
+					'B|I|N|G|O' {echo "BINGO! $x column is done."}
+					1 {echo "BINGO! 1st row is done."}
+					2 {echo "BINGO! 2nd row is done."}
+					3 {echo "BINGO! 3rd row is done."}
+					'4|5' {echo "BINGO! ${x}th row is done."}
 				}
-				elseif ($x -eq 1) {
-					echo "BINGO! 1st row is done."
-					$call="exit"
-				}
-				elseif ($x -eq 2) {
-					echo "BINGO! 2nd row is done."
-					$call="exit"
-				}
-				elseif ($x -eq 3) {
-					echo "BINGO! 3rd row is done."
-					$call="exit"
-				}
-				else {
-					echo "BINGO! ${x}th row is done."
-					$call="exit"
-				}
+				$call=exit
 			}
 		}
 		# once a row of the card is empty, kill the script (diagonal)
@@ -155,24 +143,8 @@ function bingo-rows-calls {
 }
 
 # Function order logic
-if ($mode -eq 1) {
-	if ($inputfile) {
-		card-input
-	}
-	else {
-		bingo-blackout-card
-	}
-	bingo-blackout-calls
-}
-elseif ($mode -eq 2) {
-	if ($inputfile) {
-		card-input
-	}
-	else {
-		bingo-rows-card
-	}
-	bingo-rows-calls
-}
-else {
-	echo "Invalid mode selection."
+switch ($mode){
+	1 {if ($inputfile){card-input}else{bingo-blackout-card}bingo-blackout-calls}
+	2 {if ($inputfile){card-input}else{bingo-rows-card}bingo-rows-calls}
+	default {echo "Invalid mode selection."}
 }
