@@ -1,23 +1,19 @@
 ###########################################
 # Bingo script by ben
-# Quantity not yet functional
 ########################################### 
 
 param(
 	[parameter(position=1)]
 	[string]$mode,
 	[parameter(position=2)]
-	[int]$quantity,
-	[parameter(position=3)]
 	[string]$inputfile,
-	[parameter(position=0)]
+	[parameter]
 	[switch]$help
 )
 # Help output
 if ($help) {
-	echo "USAGE: .\bingo.ps1 -mode [1 or 2] -quantity [default 1] -inputfile [default none]"
-	echo "Mode 1 for blackout, mode 2 for rows. Quantity and input file are optional."
-	echo "TEMP: Quantity currently does nothing."
+	echo "USAGE: .\bingo.ps1 -mode [1 or 2] -inputfile [default none]"
+	echo "Mode 1 for blackout, mode 2 for rows. Input file optional."
 	exit
 }
 # Mode selection if not provided
@@ -30,20 +26,13 @@ else {
 # Input file reminder
 if ($inputfile) {
 	echo "Loading contents from $inputfile."
+	$reader = [system.io.file]::opentext((resolve-path "$inputfile").path)
 }
 else {
 	echo "No input file detected. Manual entry only..."
 }
-# Quantity defaulting and card number variable assignment
-if ($quantity -eq ""){
-	$quantity=1
-}
-for ($i=1; $i -le $quantity; $i++){
-	new-variable -name "card$i" -value "@{}"
-}
 # Necessary variable declarations
 $card=@{}
-$reader = [system.io.file]::opentext((resolve-path "$inputfile").path)
 $removals = new-object system.collections.arraylist
 
 # Function definitions
@@ -85,8 +74,9 @@ function removal-calls {
 }
 function bingo-blackout-card {
 	# accept all spaces, unsorted
+	$blackoutq = read-host -prompt "Number of values to fill"
 	echo "Enter values in any order, ignoring the free space."
-	for ($i=0; $i -le 23; $i++) {
+	for ($i=0; $i -eq $blackoutq; $i++) {
 		$val = read-host -prompt "value $i"
 		$card.add($i,$val)
 	}
