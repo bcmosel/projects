@@ -1,37 +1,54 @@
 ###########################################
 # Bingo script by ben
-# Mode typing: done
-# Card quantity: unstarted
-# File input: done
-# Help flag: unstarted
+# Quantity not yet functional
 ########################################### 
 
 param(
 	[parameter(position=1)]
 	[string]$mode,
 	[parameter(position=2)]
-	[string]$inputfile
+	[int]$quantity,
+	[parameter(position=3)]
+	[string]$inputfile,
+	[parameter(position=0)]
+	[switch]$help
 )
-
+# Help output
+if ($help) {
+	echo "USAGE: .\bingo.ps1 -mode [1 or 2] -quantity [default 1] -inputfile [default none]"
+	echo "Mode 1 for blackout, mode 2 for rows. Quantity and input file are optional."
+	echo "TEMP: Quantity currently does nothing."
+	exit
+}
+# Mode selection if not provided
 if ($mode -eq "") {
 	$mode = read-host -prompt "1) Blackout`r`n2) Rows`r`nMode (select number)"
 }
 else {
-	echo "Using $mode mode."
+	echo "Using mode $mode."
 }
-
+# Input file reminder
 if ($inputfile) {
 	echo "Loading contents from $inputfile."
 }
 else {
 	echo "No input file detected. Manual entry only..."
 }
-
-$reader = [system.io.file]::opentext((resolve-path "$inputfile").path)
+# Quantity defaulting and card number variable assignment
+if ($quantity -eq ""){
+	$quantity=1
+}
+for ($i=1; $i -le $quantity; $i++){
+	new-variable -name "card$i" -value "@{}"
+}
+# Necessary variable declarations
 $card=@{}
+$reader = [system.io.file]::opentext((resolve-path "$inputfile").path)
 $removals = new-object system.collections.arraylist
 
+# Function definitions
 function card-input {
+	# file input reception
 	$i=0
 	foreach ($line in get-content $inputfile) {
 		if ($line -match $regex) {
@@ -53,7 +70,6 @@ function card-input {
 		}
 	}
 }
-
 function removal-calls {
 	# check for spaces with the value, add to to-remove list
 	foreach ($k in $card.keys) {
@@ -67,7 +83,6 @@ function removal-calls {
 		$removals = new-object system.collections.arraylist
 	}
 }
-
 function bingo-blackout-card {
 	# accept all spaces, unsorted
 	echo "Enter values in any order, ignoring the free space."
@@ -76,7 +91,6 @@ function bingo-blackout-card {
 		$card.add($i,$val)
 	}
 }
-
 function bingo-blackout-calls {
 	# accept calls for removing spaces
 	while ($call -ne "exit") {
@@ -89,7 +103,6 @@ function bingo-blackout-calls {
 		}
 	}
 }
-
 function bingo-rows-card {
 	# accept all spaces as sorted by number/letter
 	echo "Enter the values consistently ascending or descending by column"
@@ -101,7 +114,6 @@ function bingo-rows-card {
 		}
 	}
 }
-
 function bingo-rows-calls {
 	# accept calls for removing spaces
 	while ($call -ne "exit") {
@@ -134,6 +146,7 @@ function bingo-rows-calls {
 	}
 }
 
+# Function order logic
 if ($mode -eq 1) {
 	if ($inputfile) {
 		card-input
