@@ -48,10 +48,10 @@ function card-input {
 			elseif ($mode -eq 2) {
 				foreach ($p in "B","I","N","G","O") {
 					for ($i=1; $i -le 5; $i++) {
+						if ($p -eq "N" -and $i -eq 3) {continue}
 						$line=$reader.readline()
 						if ($line -eq $null) {break}
 						$line | out-null
-						if ($p -eq "N" -and $i -eq 3) {continue}
 						$card.add("$p$i",$line)
 					}
 				}
@@ -74,9 +74,9 @@ function removal-calls {
 }
 function bingo-blackout-card {
 	# accept all spaces, unsorted
-	$blackoutq = read-host -prompt "Number of values to fill"
+	$blackoutq = read-host -prompt "Number of values to fill (don't count free spaces)"
 	echo "Enter values in any order, ignoring the free space."
-	for ($i=0; $i -eq $blackoutq; $i++) {
+	for ($i=1; $i -le $blackoutq; $i++) {
 		$val = read-host -prompt "value $i"
 		$card.add($i,$val)
 	}
@@ -84,7 +84,7 @@ function bingo-blackout-card {
 function bingo-blackout-calls {
 	# accept calls for removing spaces
 	while ($call -ne "exit") {
-		$call = read-host -prompt "number called"
+		$call = read-host -prompt "Number called"
 		removal-calls
 		# once the card is empty, kill the script
 		if ($card.count -eq 0) {
@@ -108,14 +108,32 @@ function bingo-rows-calls {
 	# accept calls for removing spaces
 	while ($call -ne "exit") {
 		$keylist = new-object system.collections.arraylist
-		$call = read-host -prompt "number called"
+		$call = read-host -prompt "Number called"
 		removal-calls
 		# once a row of the card is empty, kill the script (horizontal/vertical)
 		foreach ($x in "B",1,"I",2,"N",3,"G",4,"O",5) {
 			$checkpoint = echo $card.keys | select-string $x
 			if ($checkpoint -eq $null) {
-				echo "BINGO! $x row/column is done."
-				$call="exit"
+				if (($x -eq "B") -or ($x -eq "I") -or ($x -eq "N") -or ($x -eq "G") -or ($x -eq "O")) {
+					echo "BINGO! $x-column is done."
+					$call="exit"
+				}
+				elseif ($x -eq 1) {
+					echo "BINGO! 1st row is done."
+					$call="exit"
+				}
+				elseif ($x -eq 2) {
+					echo "BINGO! 2nd row is done."
+					$call="exit"
+				}
+				elseif ($x -eq 3) {
+					echo "BINGO! 3rd row is done."
+					$call="exit"
+				}
+				else {
+					echo "BINGO! ${x}th row is done."
+					$call="exit"
+				}
 			}
 		}
 		# once a row of the card is empty, kill the script (diagonal)
