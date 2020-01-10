@@ -2,7 +2,7 @@
 # Bingo script by ben
 # Mode typing: done
 # Card quantity: unstarted
-# File input: done for blackout, not for rows
+# File input: done
 # Help flag: unstarted
 ########################################### 
 
@@ -27,6 +27,7 @@ else {
 	echo "No input file detected. Manual entry only..."
 }
 
+$reader = [system.io.file]::opentext((resolve-path "$inputfile").path)
 $card=@{}
 $removals = new-object system.collections.arraylist
 
@@ -39,9 +40,15 @@ function card-input {
 				$i++
 			}
 			elseif ($mode -eq 2) {
-				# rows file input reading
-				echo "Rows mode not currently accepting file input."
-				exit
+				foreach ($p in "B","I","N","G","O") {
+					for ($i=1; $i -le 5; $i++) {
+						$line=$reader.readline()
+						if ($line -eq $null) {break}
+						$line | out-null
+						if ($p -eq "N" -and $i -eq 3) {continue}
+						$card.add("$p$i",$line)
+					}
+				}
 			}
 		}
 	}
