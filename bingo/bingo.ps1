@@ -1,17 +1,27 @@
 ###########################################
 # Bingo script by ben
 # Mode typing: done
-# Card quantity: unstarted
+# Card quantity: unfinished
 # File input: done
-# Help flag: unstarted
+# Help switch: done
 ########################################### 
 
 param(
 	[parameter(position=1)]
 	[string]$mode,
 	[parameter(position=2)]
-	[string]$inputfile
+	[int]$quantity,
+	[parameter(position=3)]
+	[string]$inputfile,
+	[parameter(position=0)]
+	[switch]$help
 )
+
+if ($help) {
+	echo "USAGE: .\bingo.ps1 -mode [1 or 2] -quantity [default 1] -inputfile [default none]"
+	echo "Mode 1 for blackout, mode 2 for rows. Quantity and input file are optional."
+	exit
+}
 
 if ($mode -eq "") {
 	$mode = read-host -prompt "1) Blackout`r`n2) Rows`r`nMode (select number)"
