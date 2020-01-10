@@ -2,7 +2,7 @@
 # Bingo script by ben
 # Mode typing: done
 # Card quantity: unstarted
-# File input: done for blackout, not for rows
+# File input: done
 # Help flag: unstarted
 ########################################### 
 
