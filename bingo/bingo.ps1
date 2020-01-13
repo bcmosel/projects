@@ -23,6 +23,10 @@ if ($mode -eq "") {
 else {
 	echo "Using mode $mode."
 }
+# Input file if not provided
+if ($inputfile -eq "") {
+	$inputfile = read-host -prompt "Filename (Leave blank if none)"
+}
 # Input file reminder
 if ($inputfile) {
 	echo "Loading contents from $inputfile."
