@@ -4,24 +4,23 @@
 
 package main
 import (
+	"bufio"
 	"fmt"
 	"os"
 )
 
 # accept arguments for mode, inputfile, and help
-func main() {
-	mode := os.Args[0:]
-	inputfile := os.Args[1:]
-	help := os.Args
+mode := os.Args[0:]
+inputfile := os.Args[1:]
+help := os.Args
 
 fmt.println(mode)
 fmt.println(inputfile)
 fmt.println(help)
-}
 
 # Help output
 if help != nil {
-	fmt.println("USAGE: .\bingo.go -mode [1 or 2] -inputfile [default none]")
+	fmt.println("USAGE: bingo.go -mode [1 or 2] -inputfile [default none]")
 	fmt.println("Mode 1 for blackout, mode 2 for rows. Input file optional.")
 	os.exit(1)
 }
