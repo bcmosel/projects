@@ -1,5 +1,6 @@
 ###########################################
 # Bingo script by ben - golang version
+# under construction
 ########################################### 
 
 package main
