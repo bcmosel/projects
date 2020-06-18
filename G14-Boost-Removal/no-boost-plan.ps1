@@ -8,7 +8,7 @@ set-itemproperty "HKLM:\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\545
 $checkRaw=(powercfg -l | select-string "BOOST_0")
 if (!$checkRaw) {
     # Grab the default "High Performance" guid, duplicate, and create new guid
-	$oguidRaw=(powercfg -l | select-string -casesensitive "High performance")
+    $oguidRaw=(powercfg -l | select-string -casesensitive "High performance")
     $oguid=$($oguidRaw -Split " ")[3]
     $nguidRaw=(powercfg -duplicatescheme $oguid)
     $nguid=$($nguidRaw -Split " ")[3]
