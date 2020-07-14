@@ -1,6 +1,12 @@
-Write-Output "Running Choco check..."
+# Check if ran as administrator
+$adminCheck=[bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
+if (!$adminCheck) {
+    "Please run as administrator. Exiting..."
+    exit 1
+}
 
-# check and install choco pkg mgr
+# Check and install choco package manager
+Write-Output "Running Choco check..."
 $chocoCheck = 'choco version'
 if ($chocoCheck.StartsWith("choco :")) {
     $policyCheck = Get-ExecutionPolicy
@@ -16,53 +22,29 @@ else {
     Write-Output "Choco already installed."
 }
 
-$i = "i"
-$counter = 0
-$lib = @{}
-while ($i -ne "0") {
-    $i = Read-Host -prompt "Enter number of each desired application, followed by enter. When done, enter 0. For list, enter 99"
-    if ($i -eq "99") {
-        Write-Output "1) 7zip
-2) steam
-3) steam cmd
-4) discord
-5) chrome
-6) chrome remote desktop
-7) plex server
-8) utorrent
-9) obs
-10) hwinfo
-11) hijackthis
-12) spybot s&d"
-    }
-    elseif ($i -ne "0") {
-        switch ($i) {
-            1 {$n = "7zip"}
-            2 {$n = "steam"}
-            3 {$n = "steamcmd"}
-            4 {$n = "discord"}
-            5 {$n = "googlechrome"}
-            6 {$n = "chrome-remote-desktop-host"}
-            7 {$n = "plex"}
-            8 {$n = "utorrent"}
-            9 {$n = "obs"}
-            10 {$n = "hwinfo"}
-            11 {$n = "hijackthis"}
-            12 {$n = "spybot"}
+# Choco package grabber
+$input="placeholder"
+ while ($input -ne "") {
+    $input = read-host -prompt "Enter a keyword for the package you would like to search for, or just press enter when done`r`nPackage keyword"
+    if ($input -ne "") {
+        $initSearch=choco search $input
+        if ($initSearch -notcontains "0 packages found.") {
+            foreach ($line in ($initSearch | select -skip 1)) {
+                write-output $line.Split(" ")[0]
+            }
+            $selection = read-host -prompt "Please enter a package name from the list, or 'n' to search again"
+            if (($(choco info $selection) -notcontains "0 packages found.") -and $selection -ne "n") {
+                choco install -y $selection
+            }
+            elseif ($selection -eq "n") {
+                write-output "User declined selection. Going back..."
+            }
+            else {
+                write-output "===== PACKAGE NOT FOUND. Please try again and double check your entry. ====="
+            }
         }
-        $lib[$counter] = $n
-        $counter++
+        else {
+            write-output "===== No packages found with keyword '${input}' ====="
+        }
     }
 }
-
-$command = "choco install -y"
-
-foreach ($k in 0..$counter) {
-    $package = $($lib[$k])
-    $command = $command + " $package"
-}
-
-Invoke-Expression $command
-
-# template for inline .msi installations:
-# Start-Process msiexec.exe -Wait -ArgumentList '/I X:\path\to\msifile /quiet'
