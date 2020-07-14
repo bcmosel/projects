@@ -8,7 +8,7 @@ if (!$adminCheck) {
 # Check and install choco package manager
 Write-Output "Running Choco check..."
 $chocoCheck = 'choco version'
-if ($chocoCheck.StartsWith("choco :")) {
+if ($chocoCheck -contains "choco :")) {
     $policyCheck = Get-ExecutionPolicy
     if ($policyCheck -eq "Unrestricted") {
         Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
