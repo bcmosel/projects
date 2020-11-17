@@ -10,11 +10,16 @@ $d2Path = read-host -prompt "Full path to D2 (leave blank for 'C:\Program Files 
 if (!$d2path) {
     $d2path = "C:\Program Files (x86)\Diablo II"
 }
+# Confirmation prompt
 $pathResponse = read-host "Is the path `"$d2path`" correct? (Y/N)"
 switch ($pathResponse) {
     "y" {write-output "Happy path"; Break}
     default {write-output "Aborting"}
 }
+# Scan checksums
+# Options:
+# Iterative - individual checksum, then pull
+# Bulk - run checksums 100%, then pull
 
 <#
 general layout
