@@ -23,16 +23,16 @@ switch ($pathResponse) {
 }
 # Grab list from bucket
 $bucket = "https://storage.googleapis.com/storage/v1/b/pd2-client-files/o"
-$bucketObj = invoke-webrequest -uri $bucket -method "GET" -usebasicparsing
+$bucketObj = invoke-webrequest -uri $bucket -method "GET"
 $objRaw = convertfrom-json $bucketObj.content
 $objRange = 0..$($objRaw.items.count-1) # production value
 #$objRange = 1 # dev value
 # Scan checksums
 $objRange | foreach-object {
-    $objPath = $objRaw.items[$_].id -replace $objRaw.items[$_].bucket,"ProjectD2" -replace $objRaw.items[$_].generation,""
+    $objPath = $objRaw.items[$_].id -replace $objRaw.items[$_].bucket,"ProjectD2" -replace $objRaw.items[$_].generation,"" -replace ".$"
     $objHash = $objRaw.items[$_].md5hash
     $objName = $objRaw.items[$_].name
-    $localName = "${d2path}"+"\${objPath}" -replace ".$"
+    $localName = "${d2path}"+"\${objPath}"
     # If the file exists, check for match and download if needed
     if (test-path $localName) {
         $localHash = $(get-filehash $localName -algorithm md5).hash
@@ -41,9 +41,9 @@ $objRange | foreach-object {
         }
 
         else {
-            # Does not currently download anything, problem with md5 matching
             write-output "Downloading updated $objName ($objHash)"
             write-output "$localHash (mismatch)"
+            invoke-webrequest -uri $objRaw.items[$_].mediaLink -outfile (new-item -path "${localName}" -force)
         }
     }
     else { 
