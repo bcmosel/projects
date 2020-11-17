@@ -2,6 +2,7 @@
 $adminCheck=[bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
 if (!$adminCheck) {
     "Please run as administrator. Exiting..."
+    sleep 5
     exit 1
 }
 
