@@ -20,9 +20,9 @@ switch ($pathResponse) {
 $bucket = "https://storage.googleapis.com/storage/v1/b/pd2-client-files/o"
 $bucketObj = invoke-webrequest -uri $bucket -method "GET" -usebasicparsing
 $objRaw = convertfrom-json $bucketObj.content
-#$objRange = 0..$($objRaw.items.count-1)
+$objRange = 0..$($objRaw.items.count-1)
 # Commented out full range, test variable below
-$objRange = 1
+#$objRange = 1
 # Scan checksums
 $objRange | foreach-object {
     # Path $objPath needs delimiters to remove prefix/suffix
@@ -31,7 +31,7 @@ $objRange | foreach-object {
     $objHash = $objRaw.items[$_].md5hash
     $objName = $objRaw.items[$_].name
     # Path $objPath will need to be inserted below
-    $localName = "${d2path}"+"\ProjectD2\${objName}\$objGen"
+    $localName = "${d2path}"+"\ProjectD2\${objName}"
     $localHash = $(get-filehash $localName -algorithm md5).hash
     # All string outputs in the if/else will probably be removed once functionality is finalized
     if ($objHash -eq $localHash) {
