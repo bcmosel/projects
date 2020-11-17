@@ -33,12 +33,14 @@ $objRange | foreach-object {
     # Path $objPath will need to be inserted below
     $localName = "${d2path}"+"\ProjectD2\${objName}\$objGen"
     $localHash = $(get-filehash $localName -algorithm md5).hash
+    # All string outputs in the if/else will probably be removed once functionality is finalized
     if ($objHash -eq $localHash) {
         write-output "Match! Skipping to next file..."
         write-output "bucket: $objHash (local: $localHash)"
         write-output "filename: $objName (local: $localName)"
     }
     else {
+        # Does not download anything, problem with md5 matching
         write-output "Unmatched! Downloading updated file..."
         write-output "bucket: $objHash (local: $localHash)"
         write-output "filename: $objName (local: $localName)"
