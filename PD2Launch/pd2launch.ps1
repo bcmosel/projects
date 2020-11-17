@@ -27,8 +27,7 @@ $objRange | foreach-object {
     $objPath = $objRaw.items[$_].id -replace $objRaw.items[$_].bucket,"ProjectD2" -replace $objRaw.items[$_].generation,""
     $objHash = $objRaw.items[$_].md5hash
     $objName = $objRaw.items[$_].name
-    $localName = "${d2path}"+"\${objPath}"
-    $localName = $localName -replace ".$"
+    $localName = "${d2path}"+"\${objPath}" -replace ".$"
     # If the file exists, check for match and download if needed
     if (test-path $localName) {
         $localHash = $(get-filehash $localName -algorithm md5).hash
