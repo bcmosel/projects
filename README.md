@@ -8,7 +8,7 @@ Well, there's:
 * a script for people who own a G14 and want to disable boost on their CPU
    _it is actually worth noting, this works on any system_
 * a script for Project Diablo 2 updating without the official launcher
-   _WORK IN PROGRESS_
+   _currently it will just update all files, local check is busted_
 
 # You're an incredible salesman
 Thanks, I'm really trying.
