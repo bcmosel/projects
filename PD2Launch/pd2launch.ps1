@@ -1,3 +1,8 @@
+<#
+to do list:
+md5sums not correct locally, possible issue with 'generation' value
+need logic for grabbing the file if matching
+#>
 # Check if ran as administrator
 $adminCheck=[bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
 if (!$adminCheck) {
@@ -45,8 +50,3 @@ $objRange | foreach-object {
         write-output "${objName} not found, downloading ($objHash)"
     }
 }
-<#
-to do list:
-md5sums not correct locally, possible issue with 'generation' value
-need logic for grabbing the file if matching
-#>
