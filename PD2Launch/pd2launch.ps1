@@ -20,36 +20,34 @@ switch ($pathResponse) {
 $bucket = "https://storage.googleapis.com/storage/v1/b/pd2-client-files/o"
 $bucketObj = invoke-webrequest -uri $bucket -method "GET" -usebasicparsing
 $objRaw = convertfrom-json $bucketObj.content
-$objRange = 0..$($objRaw.items.count-1)
-# Commented out full range, test variable below
-#$objRange = 1
+$objRange = 0..$($objRaw.items.count-1) # production value
+#$objRange = 1 # dev value
 # Scan checksums
 $objRange | foreach-object {
-    # Path $objPath needs delimiters to remove prefix/suffix
-    $objPath = $objRaw.items[$_].id
-    $objGen = $objRaw.items[$_].generation
+    $objPath = $objRaw.items[$_].id -replace $objRaw.items[$_].bucket,"ProjectD2" -replace $objRaw.items[$_].generation,""
     $objHash = $objRaw.items[$_].md5hash
     $objName = $objRaw.items[$_].name
-    # Path $objPath will need to be inserted below
-    $localName = "${d2path}"+"\ProjectD2\${objName}"
-    $localHash = $(get-filehash $localName -algorithm md5).hash
-    # All string outputs in the if/else will probably be removed once functionality is finalized
-    if ($objHash -eq $localHash) {
-        write-output "Match! Skipping to next file..."
-        write-output "bucket: $objHash (local: $localHash)"
-        write-output "filename: $objName (local: $localName)"
+    $localName = "${d2path}"+"\${objPath}"
+    $localName = $localName -replace ".$"
+    # If the file exists, check for match and download if needed
+    if (test-path $localName) {
+        $localHash = $(get-filehash $localName -algorithm md5).hash
+        if ($objHash -eq $localHash) {
+            write-output "Match! Skipping $objName"
+        }
+
+        else {
+            # Does not currently download anything, problem with md5 matching
+            write-output "Downloading updated $objName ($objHash)"
+            write-output "$localHash (mismatch)"
+        }
     }
-    else {
-        # Does not download anything, problem with md5 matching
-        write-output "Unmatched! Downloading updated file..."
-        write-output "bucket: $objHash (local: $localHash)"
-        write-output "filename: $objName (local: $localName)"
+    else { 
+        write-output "${objName} not found, downloading ($objHash)"
     }
 }
-
 <#
 to do list:
 md5sums not correct locally, possible issue with 'generation' value
 need logic for grabbing the file if matching
-delimiters on the path of the 'id' value to cut out prefix/suffix (pd2 misnomer and generation id)
 #>
