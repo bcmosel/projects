@@ -9,6 +9,7 @@ Well, there's:
    _it is actually worth noting, this works on any system_
 * a script for Project Diablo 2 updating without the official launcher
    _currently it will just update all files, local check is busted_
+* a backup script for Windows servers
 
 # You're an incredible salesman
 Thanks, I'm really trying.
